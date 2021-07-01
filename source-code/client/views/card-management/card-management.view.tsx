@@ -1,14 +1,15 @@
 
 import { observer } from 'mobx-react';
 import * as React from 'react';
-import { useState } from "react"
+import { useState } from 'react';
 import { Card_Object } from "../../object-models/card.object"
 import { cardsService } from '../../services/cards.service'
+
 
 const CardManagement_View = observer(() => {
   const [activeCard, setActiveCard] = useState(null as Card_Object)
 
-  return <>
+  return <div className='card-management'>
     <div className="active-card">
       <h1>Card Management</h1>
       <label>Card Name</label>
@@ -26,7 +27,7 @@ const CardManagement_View = observer(() => {
         <div key={card.id}>{card.name}</div>
       )}
     </div>
-  </>
+  </div>
 
   function submitActiveCard(){
     activeCard?.id ?

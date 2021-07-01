@@ -3,6 +3,7 @@ import * as React from 'react';
 import {userService} from '../services/user.service';
 import CardManagement_View from './card-management/card-management.view';
 import { observer } from 'mobx-react';
+import { Mascot_Partial } from '../partials/mascot.partial';
 
 const Start_View = observer(() => {
   switch (
@@ -19,7 +20,10 @@ const Start_View = observer(() => {
         </button>
       </div>
     case true:
-      return <CardManagement_View/>
+      return <div className='start-view'>
+        <Mascot_Partial/>
+        <CardManagement_View/>
+      </div>
   }
 })
 export default Start_View

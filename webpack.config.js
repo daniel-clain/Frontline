@@ -51,12 +51,19 @@ module.exports = ({remote}, {mode, configName}) => {
           }],
         },
         {
-          test: /\.(jpg|png|gif)$/,
+          test: /\.(jpg|gif)$/,
           loader: 'url-loader',
           options: {
             limit: false,
             fallback: 'file-loader',
             name: 'images/[folder]/[name].[hash:8].[ext]'
+          }
+        },
+        {
+          test: /\.png$/,
+          loader: 'file-loader',
+          options:{
+            name: 'images/[name].[ext]'
           }
         },
         {
