@@ -87,6 +87,8 @@ module.exports = ({remote}, {mode, configName}) => {
         port: 8888,
         hot: true,
         open: true,
+				https: true,
+				clientLogLevel: 'silent',
         proxy: {
           '/api': {
             target: 'ws://localhost:6969',

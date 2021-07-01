@@ -1,16 +1,19 @@
 
 import { render } from 'react-dom'
 import * as React from 'react';
-import { Provider } from 'react-redux'
-import { clientState } from './global-state/client.state';
-import { Start_View } from './views/start.view';
+import {Suspense, lazy} from 'react';
+import firebase from 'firebase/app'
+import {firebaseConfig} from '../../firebase.config';
 
+firebase.initializeApp(firebaseConfig)
 const reactRenderingTag = document.createElement('react')
 document.body.appendChild(reactRenderingTag)
+
+const Start_View = lazy(() => import('./views/start.view'))
 render(
-  //<Provider store={clientState}>
+  <Suspense fallback={<div>Loading...</div>}>
     <Start_View/>
-  //</Provider>
+  </Suspense>
   , reactRenderingTag
 )
 
