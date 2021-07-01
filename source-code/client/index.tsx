@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import * as React from 'react';
 import {Suspense, lazy} from 'react';
 import firebase from 'firebase/app'
-import {firebaseConfig} from '../../firebase.config';
+import {firebaseConfig} from './firebase.config';
 
 firebase.initializeApp(firebaseConfig)
 const reactRenderingTag = document.createElement('react')
