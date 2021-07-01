@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "strict":false,
+    "module": "commonjs",
+    "target": "es6",
+    "jsx": "react",
+    "skipLibCheck": true,
+  },
+  "include": [
+    "./source-code/**/*"
+, "source-code/custom.d.ts"  ],
+  "exclude": [
+    "./node_modules"
+  ]
+}
