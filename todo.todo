@@ -1,0 +1,6 @@
+ToDos:
+  - save all game config in firebase, make all game config editable live 
+  - all game config can be edited while the game is running without breaking it
+  - all game is editable using a frontend ui
+  - test if firebase can be hacked with public firebase config data
+  - give controls to search and filter all the games objects, including cards, volume, deck, budget, armor

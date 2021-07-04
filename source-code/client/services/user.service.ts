@@ -9,7 +9,7 @@ import 'firebase/auth'
 var provider = new auth.FacebookAuthProvider()
 
 
-export const userService = observable({
+export const UserService = observable({
   user: <User> null,
   requiresAuthentication: true,
   userAuthenticated: undefined,
@@ -21,11 +21,11 @@ export const userService = observable({
 })
 
 
-if(userService.requiresAuthentication){
+if(UserService.requiresAuthentication){
   auth().onAuthStateChanged(u => {
-    userService.user = u
-    userService.userAuthenticated = !!u
-    userService.userDoc = u ? firestore().collection('Users').doc(u.uid) : null
+    UserService.user = u
+    UserService.userAuthenticated = !!u
+    UserService.userDoc = u ? firestore().collection('Users').doc(u.uid) : null
   })
 }
 
