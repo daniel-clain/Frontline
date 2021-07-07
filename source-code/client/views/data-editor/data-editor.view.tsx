@@ -3,7 +3,7 @@ import { observer } from 'mobx-react';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { Card_Data_Object, Card_Object } from "../../object-models/card.object"
-import { DataService } from '../../services/data.service';
+import { dataService } from '../../services/data.service';
 import {mainState } from '../../state/main.state'
 import { is } from '../../helper-functions';
 import { MainState } from '../../object-models/main-state.object';
@@ -13,6 +13,9 @@ import { Faction_Data_Object } from '../../object-models/faction.object';
 import { Type_Data_Object } from '../../object-models/type.object';
 import { Ability_Data_Object } from '../../object-models/ability.object';
 import { mainMap } from '../../map';
+import { collectionSet, Collection_Type } from '../../sets/firebase-collections.set';
+import { Game_Data_Object } from '../../object-models/game.object';
+import { Player_Data_Object } from '../../object-models/player.object';
 
 
 
@@ -34,30 +37,40 @@ function createEmptyObject(type: keyof MainState): Card_Data_Object | Ability_Da
 
   if(type == 'factions'){
     return {
-      name: ''
+      name: null
     } as Faction_Data_Object
   }
 
   if(type == 'decks'){
     return {
-      name: ''
-    } as Faction_Data_Object
+      name: '',
+      cardIds: []
+    } as Deck_Data_Object
   }
 
   if(type == 'abilities'){
     return {
       name: ''
-    } as Faction_Data_Object
+    } as Ability_Data_Object
   }
 
   if(type == 'types'){
     return {
       name: ''
-    } as Faction_Data_Object
+    } as Type_Data_Object
+  }
+  if(type == 'players'){
+    return {
+      name: ''
+    } as Player_Data_Object
+  }
+  if(type == 'games'){
+    return {
+    } as Game_Data_Object
   }
 }
 
-const DataEditor_View = observer(() => {
+export const DataEditor_View = observer(() => {
   const [activeDataType, setActiveDataType] = useState<keyof MainState>('cards')
   const [activeDataItem, setActiveDataItem] = useState<Data_Object>(createEmptyObject(activeDataType))
 
@@ -69,40 +82,46 @@ const DataEditor_View = observer(() => {
   const dataList = mainState[activeDataType] as {id: string, name: string}[]
 
   return <>
-    <div className='data-editor'>
+    <div className='data-editor-view view'>
+      
       <h1>Data Editor</h1>
-      <div className="data-type-selector">
-        <label>{activeDataType}</label>
-        <select onChange={({target}) => setActiveDataType(target.value as keyof MainState)}>
-          {Object.keys(mainState)
-          .map((key: keyof MainState) => 
-            <option 
-              key={key}
-              className={is('selected').if(activeDataItem?.[key] == key)}
-              value={key}
-            >
-              {key}
-            </option>
-          )}
-        </select>
-      </div>
+
+      <select 
+        className="data-type-selector"
+        onChange={({target}) => {
+          setActiveDataItem(createEmptyObject(target.value as keyof MainState))
+          setActiveDataType(target.value as keyof MainState)
+          
+        }}
+      >
+        {collectionSet
+        .map((key: Collection_Type) => 
+          <option 
+            key={key}
+            className={is('selected').if(activeDataItem?.[key] == key)}
+            value={mainMap.collection.toMain[key]}
+          >
+            {key}
+          </option>
+        )}
+      </select>
 
       <div className="list container has-border">
         
         {dataList.map(dataItem => {
-          console.log(dataItem)
           return <div 
               key={dataItem.id}
               onClick={_ => setActiveDataItem(dataItem)}
               className={is('selected').if(activeDataItem?.id == dataItem.id)}
             >
-              {dataItem.name}
+              {dataItem.name || dataItem.id}
           </div>
         })}
       </div>
 
       <div className="active-data-item">
         {getActiveDataItemFields()}
+
         <button onClick={submitActiveDataItem}>
           {activeDataItem?.id ? 'Update' : 'Add'}
         </button>
@@ -110,6 +129,12 @@ const DataEditor_View = observer(() => {
         <button onClick={deleteActiveDataItem}>
           {activeDataItem?.id ? 'Delete' : 'Clear'}
         </button>
+
+        {activeDataItem?.id ? 
+          <button onClick={_ => setActiveDataItem(createEmptyObject(activeDataType))}>
+            Unselect
+          </button>
+        : ''}
       </div>
     </div>
   </>
@@ -117,19 +142,20 @@ const DataEditor_View = observer(() => {
 
   // implementation
 
+
   function getActiveDataItemFields(){
     return activeDataItem && Object.keys(createEmptyObject(activeDataType)).map((cardKey:any) => {
-      let field
-      switch(cardKey){
-        case 'ability1Id': 
-        case 'ability2Id': 
-        case 'factionId': 
-        case 'typeId': field = getSelectField(cardKey); break
-        default: field = getInputField(cardKey)
-      }
+
+      const isSelectField = [
+        'cardIds','ability1Id', 'ability2Id', 'factionId', 'typeId'
+      ].includes(cardKey)
+
       return (
         <div className="field" key={cardKey}>
-          {field}
+          {isSelectField ? 
+            getSelectField(cardKey) :
+            getInputField(cardKey)
+          }
         </div>
       )
     })
@@ -140,8 +166,8 @@ const DataEditor_View = observer(() => {
     const collectionString = mainMap.mainState.toCollection[activeDataType]
 
     activeDataItem?.id ?
-      DataService.update(collectionString, activeDataItem) :
-      DataService.add(mainMap.mainState.toCollection[activeDataType], activeDataItem)  
+      dataService.update(collectionString, activeDataItem) :
+      dataService.add(mainMap.mainState.toCollection[activeDataType], activeDataItem)  
 
     setActiveDataItem(createEmptyObject(activeDataType))
   }
@@ -151,41 +177,64 @@ const DataEditor_View = observer(() => {
     const collectionString = mainMap.mainState.toCollection[activeDataType]
 
     if(activeDataItem.id){
-      DataService.deleteData(collectionString, activeDataItem)
+      dataService.deleteData(collectionString, activeDataItem)
     }      
 
     setActiveDataItem(createEmptyObject(activeDataType))
   }
 
-  function getInputField(cardKey: keyof Data_Object){ 
+  function getInputField(dataKey: string){ 
     return <>
-      <label>{cardKey}</label>
+      <label>{dataKey}</label>
       <input 
         required
-        value={is(activeDataItem?.[cardKey] || '').if(activeDataItem)}
+        value={
+          is(activeDataItem?.[dataKey] || '').if(activeDataItem)
+          
+        }
         onChange={({target}) => 
-          setActiveDataItem({...activeDataItem, [cardKey]: target.value })
+          setActiveDataItem({...activeDataItem, [dataKey]: target.value })
         }
         onKeyUp={({code}: any) => code == 'Enter' &&  submitActiveDataItem()}
       />
     </>
   }
 
-  function getSelectField(dataKey: keyof Data_Object){ 
-    const mainList = mainState[mainMap.key.toMainState[dataKey]]
+  function getSelectField(dataKey: string){ 
+    const mainList = mainState[mainMap.id.toMainState[dataKey]]
+    const dataItemId: string | string[] = activeDataItem[dataKey]
+    const isMultiSelect = ['cardIds'].includes(dataKey)
+    
     return <>
       <label>{mainMap.idToBuilt[dataKey]}</label>
-      <select>
-          <option disabled selected={!activeDataItem[dataKey]}>Select {mainMap.idToBuilt[dataKey]}</option>
+      <select 
+        className={dataItemId ? '' : 'disabled'}
+        multiple={isMultiSelect}
+        value={dataItemId || ''} 
+        onChange={({target}) => {
+
+          if(isMultiSelect){ 
+            const selectedIds = Array.from(target.selectedOptions).map(o => o.value)
+            setActiveDataItem({...activeDataItem, [dataKey]: selectedIds})
+          } else {
+            const value = target.value == 'Clear' ? null : target.value
+            setActiveDataItem({...activeDataItem, [dataKey]: value})
+          }
+        }}
+      >
+        {!dataItemId ? 
+          <option className='disabled' value={activeDataItem[dataKey]}>
+            Select {mainMap.idToBuilt[dataKey]}
+          </option> :
+          <option className='disabled' value={null}>
+            Clear
+          </option>
+        }
         {mainList.map(item => 
           <option 
             key={item.id} 
             value={item.id}
-            className={is('selected').if(activeDataItem[dataKey] == item.id)}
-            onSelect={({target}) => 
-              console.log(target)  
-            //setActiveDataItem({...activeDataItem, [cardKey]: target.value})
-            }
+            className={is('selected').if(activeDataItem[dataKey] && activeDataItem[dataKey] == item.id)}
           >
             {item.name}
           </option>
@@ -194,4 +243,3 @@ const DataEditor_View = observer(() => {
     </>
   }
 })
-export default DataEditor_View

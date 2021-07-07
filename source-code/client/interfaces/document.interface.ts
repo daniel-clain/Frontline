@@ -1,2 +1,2 @@
 
-export default interface IDocument extends firebase.firestore.DocumentReference{}
+export interface IDocument extends firebase.firestore.DocumentReference{}

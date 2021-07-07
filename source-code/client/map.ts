@@ -27,12 +27,13 @@ export const mainMap = {
     }
   },
 
-  key:{
+  id:{
     toMainState: {
       'ability1Id': 'abilities',
       'ability2Id': 'abilities',
       'factionId': 'factions',
       'typeId': 'types',
+      'cardIds': 'cards'
     }
   },
 
@@ -46,7 +47,8 @@ export const mainMap = {
     factionId: 'faction',
     typeId:'type',
     ability1Id: 'ability 1',
-    ability2Id: 'ability 2'
+    ability2Id: 'ability 2',
+    cardIds: 'cards'
   },
   idsToCount: {
     cardIds: 'cards'

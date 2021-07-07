@@ -1,20 +1,28 @@
+
 import { Card_Object } from "./card.object";
 import Data_Object from "./data.object.super";
 import { Deck_Object } from "./deck.object";
 
-interface GameState_Object{
-  hand: Card_Object[]
-  budget: number
-  library: Card_Object[]
-  graveyard: Card_Object[]
-  cardsInPlay: Card_Object[]
+export interface Player_Data_Object extends Data_Object {
+  name: string
+  activeDeckId: string
+  deckIds: string[]
+  ready: boolean
 }
-
 export interface Player_Object extends Data_Object {
   name: string
   activeDeck: Deck_Object
   decks: Deck_Object[]
   ready: boolean
-  gameState?: GameState_Object
 }
+
+
+export interface Player_Game_Object extends Data_Object{
+  player: Card_Object
+  hand: Card_Object[]
+  graveyard: Card_Object[]
+  library: Card_Object[]
+  budget: number
+}
+
 

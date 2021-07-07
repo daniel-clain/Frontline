@@ -1,7 +1,6 @@
 import { mainState } from "../state/main.state";
 import { Ability_Object } from "./ability.object";
 import Data_Object from "./data.object.super";
-import { Deck_Object } from "./deck.object";
 import { Faction_Object } from "./faction.object";
 import { Type_Object } from "./type.object";
 
@@ -19,7 +18,7 @@ export interface Card_Data_Object extends Data_Object{
 
 }
 
-export interface Card_Object extends Card_Data_Object{
+export interface Card_Object extends Data_Object{
   faction: Faction_Object
   ability1: Ability_Object
   ability2: Ability_Object

@@ -9,5 +9,11 @@
   return ''
 } */
 
-export const is = val => ({if: condition => condition ? val : ''})
+export const is = val => ({
+  if: condition => condition ? val : null
+})
+
+export const randomNumber = ({from,to}) => {
+  return Math.round(Math.random()*(to-from))
+}
 

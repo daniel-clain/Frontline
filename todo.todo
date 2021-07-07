@@ -1,6 +1,15 @@
 ToDos:
-  - save all game config in firebase, make all game config editable live 
-  - all game config can be edited while the game is running without breaking it
-  - all game is editable using a frontend ui
-  - test if firebase can be hacked with public firebase config data
-  - give controls to search and filter all the games objects, including cards, volume, deck, budget, armor
+  High:
+    - setup game vs computer
+    - on game ready, start game, roll dice, start round
+    - if computer start it does what it can and then passes turn
+    - ui shows computer card count, players cards in hand, both players library, budget, and all 12 tiles each
+    - when players turn, player can see hand, they can try to play cards and get validated, component will activate the end turn button if now options are available
+    
+  Low:
+  Ongoing:
+    - save all game config in firebase, make all game config editable live 
+    - all game config can be edited while the game is running without breaking it
+    - all game is editable using a frontend ui
+    - test if firebase can be hacked with public firebase config data
+    - give controls to search and filter all the games objects, including cards, volume, deck, budget, armor

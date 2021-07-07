@@ -3,6 +3,8 @@ import Data_Object from "./data.object.super";
 
 
 export interface Deck_Data_Object extends Data_Object{
+  name: string
+  cardIds: string[]
 
 }
 
