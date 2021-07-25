@@ -25,6 +25,8 @@ function data$<T extends Data_Object>(collectionName: Collection_Type, receiveDa
 
 function getCollection(dataType: Collection_Type){  
   return firestore().collection(dataType)
+
+  firestore().doc
 }
 
 function add<T extends Data_Object>(dataType: Collection_Type, data: T): Promise<T> {

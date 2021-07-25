@@ -14,5 +14,10 @@ export const mainState = observable<MainState>({
   abilities:[],
   factions: [],
   types: [],
-  decks: []
+  decks: [],
+  gameConfig: null,
+
+  draggedCard: null,
+  hoveredCard: null
+
 })

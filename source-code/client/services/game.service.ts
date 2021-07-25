@@ -1,10 +1,19 @@
 import { randomNumber } from "../helper-functions"
-import { Game_Data_Object } from "../object-models/game.object"
+import { Card_Object } from "../object-models/card.object"
+import { Game_Data_Object, Game_Object } from "../object-models/game.object"
 import { mainState } from "../state/main.state"
+import { DraggedCard } from "../views/in-game/in-game.view"
 import { dataService } from "./data.service"
+import { mainService } from "./main.service"
 
-interface PlayerInGame_Object{
-  
+
+
+export const gameService = {
+  startNewGame,
+  readyForGame,
+  cardDragDrop,
+  cardDragStart,
+  setMouseCoords
 }
 
 
@@ -12,26 +21,27 @@ function readyForGame(){
   startGame(mainState.user.uid)
 }
 function startGame(playerId: string) {
-  const fiftyFifty = randomNumber({from: 0, to: 1})
-  dataService.add<Game_Data_Object>('Games', {
-    playerIds: [playerId],    
-    turnCount: 0,
-    playersTurn: !!fiftyFifty
-  } as Game_Data_Object)
+  const game = mainService.convertToDataObject<Game_Object, Game_Data_Object>(new Game_Object([playerId]))
+  dataService.add<Game_Data_Object>('Games', game)
 }
 
-const startNewGame = (gameId: string) => {
+function startNewGame(gameId: string){
     
 }
 
-export const gameService = {
-  startNewGame,
-  readyForGame
+function cardDragDrop(draggedCard: DraggedCard){
+  console.log(`card dropped ${draggedCard.card.name}`);
+  mainState.draggedCard = null
 }
 
+function cardDragStart(card: Card_Object){
+  mainState.draggedCard = {...mainState.draggedCard, card}
+  mainState.hoveredCard = null
+}
 
-
-
+function setMouseCoords(mouseCoords: {x: number, y: number}){
+  mainState.draggedCard = {...mainState.draggedCard, mouseCoords}
+}
 
 
 

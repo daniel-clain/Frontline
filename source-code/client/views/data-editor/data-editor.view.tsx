@@ -2,72 +2,22 @@
 import { observer } from 'mobx-react';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Card_Data_Object, Card_Object } from "../../object-models/card.object"
 import { dataService } from '../../services/data.service';
 import {mainState } from '../../state/main.state'
 import { is } from '../../helper-functions';
 import { MainState } from '../../object-models/main-state.object';
 import Data_Object from '../../object-models/data.object.super';
-import { Deck_Data_Object } from '../../object-models/deck.object';
-import { Faction_Data_Object } from '../../object-models/faction.object';
-import { Type_Data_Object } from '../../object-models/type.object';
-import { Ability_Data_Object } from '../../object-models/ability.object';
-import { mainMap } from '../../map';
+import { mainMap } from '../../constants/objects-map';
 import { collectionSet, Collection_Type } from '../../sets/firebase-collections.set';
-import { Game_Data_Object } from '../../object-models/game.object';
-import { Player_Data_Object } from '../../object-models/player.object';
+import { dataObjects } from '../../constants/data-object-keys.constant';
 
 
 
-function createEmptyObject(type: keyof MainState): Card_Data_Object | Ability_Data_Object | Deck_Data_Object | Faction_Data_Object | Type_Data_Object
- {
-  if(type == 'cards'){
-    return {
-      name: null,
-      ability1Id: null,
-      ability2Id: null,
-      hp: null,
-      typeId: null,
-      budget: null,
-      morale: null,
-      factionId: null,
-      armor: null
-    } as Card_Data_Object
-  }
-
-  if(type == 'factions'){
-    return {
-      name: null
-    } as Faction_Data_Object
-  }
-
-  if(type == 'decks'){
-    return {
-      name: '',
-      cardIds: []
-    } as Deck_Data_Object
-  }
-
-  if(type == 'abilities'){
-    return {
-      name: ''
-    } as Ability_Data_Object
-  }
-
-  if(type == 'types'){
-    return {
-      name: ''
-    } as Type_Data_Object
-  }
-  if(type == 'players'){
-    return {
-      name: ''
-    } as Player_Data_Object
-  }
-  if(type == 'games'){
-    return {
-    } as Game_Data_Object
-  }
+function createEmptyObject<T extends Data_Object>(type: keyof MainState): T{
+  const singularKey = mainMap.mainState.toSingle[type]
+  const object: T = dataObjects[singularKey]
+  return object
+ 
 }
 
 export const DataEditor_View = observer(() => {
@@ -80,7 +30,7 @@ export const DataEditor_View = observer(() => {
   }, [activeDataType])
 
   const dataList = mainState[activeDataType] as {id: string, name: string}[]
-
+ 
   return <>
     <div className='data-editor-view view'>
       
@@ -146,9 +96,7 @@ export const DataEditor_View = observer(() => {
   function getActiveDataItemFields(){
     return activeDataItem && Object.keys(createEmptyObject(activeDataType)).map((cardKey:any) => {
 
-      const isSelectField = [
-        'cardIds','ability1Id', 'ability2Id', 'factionId', 'typeId'
-      ].includes(cardKey)
+      const isSelectField = Object.keys(mainMap.id.toMainState).includes(cardKey)
 
       return (
         <div className="field" key={cardKey}>
@@ -185,7 +133,7 @@ export const DataEditor_View = observer(() => {
 
   function getInputField(dataKey: string){ 
     return <>
-      <label>{dataKey}</label>
+      <label>{mainMap.property.toLabel[dataKey] || dataKey}</label>
       <input 
         required
         value={
@@ -203,10 +151,10 @@ export const DataEditor_View = observer(() => {
   function getSelectField(dataKey: string){ 
     const mainList = mainState[mainMap.id.toMainState[dataKey]]
     const dataItemId: string | string[] = activeDataItem[dataKey]
-    const isMultiSelect = ['cardIds'].includes(dataKey)
+    const isMultiSelect = ['cardIds', 'deckIds', 'playerIds'].includes(dataKey)
     
     return <>
-      <label>{mainMap.idToBuilt[dataKey]}</label>
+      <label>{mainMap.id.toBuilt[dataKey]}</label>
       <select 
         className={dataItemId ? '' : 'disabled'}
         multiple={isMultiSelect}
@@ -224,7 +172,7 @@ export const DataEditor_View = observer(() => {
       >
         {!dataItemId ? 
           <option className='disabled' value={activeDataItem[dataKey]}>
-            Select {mainMap.idToBuilt[dataKey]}
+            Select {mainMap.id.toBuilt[dataKey]}
           </option> :
           <option className='disabled' value={null}>
             Clear

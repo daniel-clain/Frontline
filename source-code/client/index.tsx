@@ -27,27 +27,32 @@ firebase.initializeApp(firebaseConfigSlut)
 const reactRenderingTag = document.createElement('react')
 document.body.appendChild(reactRenderingTag)
 
+const {
+  showFacebookSignIn, 
+  startReadingDataStreams, ifUserPlayerDoesntExistCreatePlayer
+} = mainService  
+
 auth().onAuthStateChanged(user => {
-  mainState.userDoc = user ? 
-    firestore().collection('Users').doc(user.uid) : 
-    null
-  mainState.user = user
+  if(user){
+    mainState.userDoc = firestore().collection('Users').doc(user.uid)
+    mainState.user = user
+    ifUserPlayerDoesntExistCreatePlayer()
+  } else {
+    mainState.userDoc = null
+    mainState.user = null
+  }
+
 })
 
 
-
 const Index_C = observer(() => {
+  
   const {activeView, user} = mainState  
 
   useEffect(() => {
-    mainService.startReadingDataStreams()
+    startReadingDataStreams()
   }, [user])
-
-  const provider = new auth.FacebookAuthProvider()
-  const showFacebookSignIn = () => {
-    return auth().signInWithPopup(provider)
-    .catch(error => alert(error.message))
-  }
+  
 
   
   if(user === undefined){
@@ -79,7 +84,6 @@ const Index_C = observer(() => {
 
   function getRandomBackgroundImage(){
     const randomIndex = randomNumber({from: 0, to: 5})
-    console.log('randomIndex :>> ', randomIndex);
     const randomBgImage = backgroundImags[randomIndex]
     return <img src={randomBgImage} className="bg-image"></img>
   }

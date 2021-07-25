@@ -1,5 +1,6 @@
 interface Data_Object{
-  id?: string
+  id: string
+  dateLastUpdated?: string
 }
 
 export default Data_Object

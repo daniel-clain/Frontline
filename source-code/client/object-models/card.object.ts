@@ -4,21 +4,27 @@ import Data_Object from "./data.object.super";
 import { Faction_Object } from "./faction.object";
 import { Type_Object } from "./type.object";
 
+abstract class Card_Base_Object{
+  name: string = null
+  hp: number = null
+  budget: number = null
+  morale: number = null
+  armor: number = null
+  image: any
 
-export interface Card_Data_Object extends Data_Object{
-  name: string
-  ability1Id: string
-  ability2Id: string
-  hp: number
-  typeId: string
-  budget: number
-  morale: number
-  factionId?: string
-  armor: number
+}
+export class Card_Data_Object extends Card_Base_Object implements Data_Object{
+  id
+  ability1Id: string = null
+  ability2Id: string = null
+  typeId: string = null
+  factionId?: string = null
 
 }
 
-export interface Card_Object extends Data_Object{
+export class Card_Object extends Card_Base_Object implements Data_Object{
+  id
+  image: any
   faction: Faction_Object
   ability1: Ability_Object
   ability2: Ability_Object

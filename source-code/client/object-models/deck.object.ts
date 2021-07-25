@@ -2,9 +2,10 @@ import { Card_Object } from "./card.object";
 import Data_Object from "./data.object.super";
 
 
-export interface Deck_Data_Object extends Data_Object{
-  name: string
-  cardIds: string[]
+export class Deck_Data_Object implements Data_Object{
+  id
+  name: string = null
+  cardIds: string[] = []
 
 }
 
