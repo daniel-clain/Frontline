@@ -5,6 +5,7 @@ import { mainState } from "../state/main.state"
 import { DraggedCard } from "../views/in-game/in-game.view"
 import { dataService } from "./data.service"
 import { mainService } from "./main.service"
+import {Subject} from 'rxjs';
 
 
 
@@ -13,7 +14,10 @@ export const gameService = {
   readyForGame,
   cardDragDrop,
   cardDragStart,
-  setMouseCoords
+  setMouseCoords,
+  events: {
+    onCardDropped: new Subject<DraggedCard>()
+  }
 }
 
 
@@ -30,8 +34,12 @@ function startNewGame(gameId: string){
 }
 
 function cardDragDrop(draggedCard: DraggedCard){
-  console.log(`card dropped ${draggedCard.card.name}`);
+  const {card: {name}, mouseCoords:{x, y}} = draggedCard
+  console.log(`card (${name}) dropped at: x${x}/y${y} `);
   mainState.draggedCard = null
+
+  gameService.events.onCardDropped.next(draggedCard)
+
 }
 
 function cardDragStart(card: Card_Object){
@@ -43,6 +51,10 @@ function setMouseCoords(mouseCoords: {x: number, y: number}){
   mainState.draggedCard = {...mainState.draggedCard, mouseCoords}
 }
 
+// impelementation
 
+function getTileCardWasDroppedOn(){
+
+}
 
 

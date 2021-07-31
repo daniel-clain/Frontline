@@ -28,6 +28,7 @@
 		"react-dom": "^17.0.2",
 		"react-hot-loader": "^4.13.0",
 		"react-web-component": "^2.0.1",
+		"rxjs": "^7.3.0",
 		"sass": "^1.26.10",
 		"sass-loader": "^9.0.3",
 		"style-loader": "^1.2.1",

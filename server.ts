@@ -11,5 +11,8 @@ app.get('/favicon.ico', (req, res) => {
 app.get('*', (req, res) => {
   console.log(`yo dawg, we got a request from ${req.url}`);
 })
+app.get('/delete', (req, res) => {
+  res.write('To delete your account contact site admin')
+})
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
