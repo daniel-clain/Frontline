@@ -1,0 +1,8 @@
+* the front end only updates when the data changes, the data only changes as a result of events
+  - if a user takes an action, that can be an event that triggers data change, the ui will react to data change and instantly update
+  
+* based on the state of the front end, certain functions are/aren't available and will display things differently based on state change
+  - eg if you have enough budget to pay for a card, the startDrag function will be available, and it will show differently to ones that you can't afford
+
+* all of the games data is saved in 1 big game object on firebase
+- once a game is started, instances of the objects are made, and changes to the base one wont affect the instance

@@ -4,38 +4,38 @@ import { Collection_Type } from "../sets/firebase-collections.set";
 export const mainMap = {
   
   mainState: {
-    toCollection: {
+    toCollection: <{[key in keyof MainState]: Collection_Type}>{
       cards: 'Cards',
-      players: 'Players',
+      people: 'People',
       games: 'Games',
       factions: 'Factions',
       types: 'Types',
       abilities: 'Abilities',
       decks: 'Decks',
-      gameConfig: 'Game Config'
+      gameConfigs: 'Game Configs'
     },
     toSingle: {
       cards: 'card',
-      players: 'player',
+      people: 'person',
       games: 'game',
       factions: 'faction',
       types: 'type',
       abilities: 'ability',
       decks: 'deck',
-      gameConfig: 'gameConfig',
+      gameConfigs: 'gameConfig',
     }
   },
   
   collection:{
-    toMain: {
+    toMain:  <{[key in Collection_Type]: keyof MainState | string}>{
       'Cards': 'cards',
-      'Players': 'players',
+      'People': 'people',
       'Games': 'games',
       'Factions': 'factions',
       'Types': 'types',
       'Abilities': 'abilities',
       'Decks': 'decks',
-      'Game Config': 'gameConfig'
+      'Game Configs': 'gameConfigs'
     }
   },
   
@@ -44,17 +44,17 @@ export const mainMap = {
     toId:{
       cards: 'cardIds',
       decks: 'deckIds',
-      players: 'playerIds',
+      people: 'peopleIds',
       ability1: 'ability1Id',
       ability2: 'ability2Id',
       faction: 'factionId',
       type: 'typeId',
-      deck: 'activeDeckId'
+      activeDeck: 'activeDeckId'
     }
   },
 
   id:{
-    toMainState: {
+    toMainState: <{[k: string]: keyof MainState | string}>{
       ability1Id: 'abilities',
       ability2Id: 'abilities',
       factionId: 'factions',
@@ -62,17 +62,17 @@ export const mainMap = {
       cardIds: 'cards',
       deckIds: 'decks',
       activeDeckId: 'decks',
-      playerIds: 'players'
+      peopleIds: 'people'
     },
     toBuilt: {
       cardIds: 'cards',
       deckIds: 'decks',
-      playerIds: 'players',
+      peopleIds: 'people',
       ability1Id: 'ability1',
       ability2Id: 'ability2',
       factionId: 'faction',
       typeId: 'type',
-      activeDeckId: 'deck'
+      activeDeckId: 'activeDeck'
     }
   },
 

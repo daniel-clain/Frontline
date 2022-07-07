@@ -1,0 +1,12 @@
+
+must store data in minimal form
+====================================
+
+* different object have different object relationships, they cant be all saved in the database, they have to be broken up in their one to many connection points. Eg one deck has many cards, one card has many abilities. You cant be storing a deck with all the data of each card and each ability. Instead the deck has only card ids, and each card has an id, each card has ability ids, and each ability has an id.
+
+challenges
+=================
+* 2 different types, one of when its stored as data, one of when its a fully built out dynamic item
+* if the data changes, then all the relative build out objects should change
+* if an item is deleted, then its reference to anything above it should be removed, and its reference to anything below it should not no references above it. 
+  - For example, if a card is deleted, all the decks that had that as a card should no long retain that card's id in its card list. And, any ability the card have should be marked as unused, so its not just floating in the eather with no reference to it. If a deck is deleted, then all players who had that deck in their list should have it removed, if its an active deck, then that player should have no active deck

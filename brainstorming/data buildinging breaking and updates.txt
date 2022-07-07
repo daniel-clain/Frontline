@@ -1,0 +1,9 @@
+* some data objects should only update in very niche circumstances
+- cards should only update if changed in the card editor view. it should never update otherwise
+- other things are the same as cards, such as deck, game config, abilities, factions, types etc
+- games are not edited from the data editing list. they are only updated based on player actions in game
+
+
+* as the firebase data updates, it should trigger a responsive trigger on the front end to update all the base data objects
+
+* there is a difference between a base original solid card vs an instance of a card in a game 

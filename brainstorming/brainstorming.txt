@@ -1,0 +1,12 @@
+* the game saves its state to firebase after every update
+* each players have their local update when data on backend updates
+  - docs data is obeserved, and local state is updated based on returned data
+* the visual elements in the webpage are react components that observe the state in mobx
+* if player is in an active game, and you are in play tab, then show the game data in that state
+* players can only take action if the game state gives them priority
+  - when their turn finishes they lose priority
+* game will auto end turn if no available options
+* if its a players priority and no actions are taking place, then zero code should be running and zere data updates should be occuring
+* as a player makes a play, the game pauses for 2 seconds to show the action
+* as the actions resolve, you can check the log to see what happened to what 
+* the player that ques and finds another player quing starts the game. the other players view changes when data state updates to have a game that includes that player

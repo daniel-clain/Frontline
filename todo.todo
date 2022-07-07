@@ -1,9 +1,15 @@
 ToDos:
   High:
-    - setup game vs computer
-    - on game ready, start game, roll dice, start round
-    - if computer start it does what it can and then passes turn
-    - ui shows computer card count, players cards in hand, both players library, budget, and all 12 tiles each
+    data:
+      - when sub item is deleted, delete it from all parent references
+    how clients and players relate:
+      - a client has a 1 to 1 relation to a facebook login
+      - a client can have many players
+      - a player is a 1 to 1 relation to a browser tab instance
+    player vs player only:
+      - the single player will be responsible for creating the game. (Problem: if there are 2 players in cue, and the browser code says 'if 2 in que then create game', then both players will each create a game). The second player will not 'que', the second player will see if theres a first player, if there is, update firebase with new game. the single playe will also determine 50/50 who goes first. then the players browser code will handle the rest
+      - all the controlls will be disabled if its not your turn
+      - players should see opponent card drags, hovers, and arrows and cursor movement 
     - when players turn, player can see hand, they can try to play cards and get validated, component will activate the end turn button if now options are available
     
   Low:

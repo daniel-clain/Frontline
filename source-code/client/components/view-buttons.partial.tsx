@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { is } from '../helper-functions';
+import { is } from '../../helper-functions';
 import { viewsSet } from '../sets/views.set';
 import { mainState } from '../state/main.state';
 

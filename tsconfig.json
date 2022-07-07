@@ -11,7 +11,7 @@
   },
   "include": [
     "./source-code/**/*"
-, "source-code/custom.d.ts"  ],
+, "source-code/custom.d.ts", "source-code/client/test/simplicity-test.tsx"  ],
   "exclude": [
     "./node_modules"
   ]

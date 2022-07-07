@@ -1,33 +1,48 @@
 
-import { auth, firestore } from "firebase/app";
+import { auth } from "firebase/app";
 import { mainMap } from "../constants/objects-map";
-import { Card_Data_Object, Card_Object } from "../object-models/card.object";
-import Data_Object from "../object-models/data.object.super";
+import { Card_Data, Card } from "../object-models/data-objects/card.object";
+import Data from "../object-models/data-objects/data.object.super";
 import { MainState } from "../object-models/main-state.object";
-import { Player_Data_Object } from "../object-models/player.object";
 import { collectionSet } from "../sets/firebase-collections.set";
 import { mainState } from "../state/main.state";
 import { dataService } from "./data.service";
-import { gameService } from "./game.service";
-
+import { randomNumber } from "../../helper-functions";
+import { personService } from "./person.service";
+import { GameConfig_Data } from "../object-models/data-objects/game-config.object";
+import { dataObjects } from "../constants/data-object-keys.constant";
+import { Game_Data } from "../object-models/data-objects/game.object";
+import { Deck_Data, Deck } from "../object-models/data-objects/deck.object";
+import { Person_Data, Person } from "../object-models/data-objects/person.object";
 
 
 export const mainService = {
-  startReadingDataStreams,
+  syncFirestoreData,
   showFacebookSignIn,
-  ifUserPlayerDoesntExistCreatePlayer,
-  buildOutDataObject,
-  deckIdToCards,
-  convertToDataObject
+  getRandom
 }
 
-function startReadingDataStreams(){  
+async function syncFirestoreData(){  
   collectionSet.forEach(collection => {
-    dataService.data$(collection, (dataItems: Data_Object[]) => {
+    console.log('getting data for ', collection);
+    dataService.data$(collection, (dataItems: Data[]) => {
+      console.log('got data for ', collection);
+      if(collection == 'People'){
+        console.log('people data is: ', dataItems);
+      }
       mainState[mainMap.collection.toMain[collection]] = dataItems
     })
   })
+
+  const gameConfigs = await dataService.getCollectionData('Game Configs')
+  if(!gameConfigs.length){
+    dataService.add<GameConfig_Data>('Game Configs',  
+      dataObjects.gameConfig
+    )
+  }
 }
+
+
 
 const facebookProvider = new auth.FacebookAuthProvider()
 function showFacebookSignIn(){
@@ -35,69 +50,12 @@ function showFacebookSignIn(){
   .catch(error => alert(error.message))
 }
 
-function convertToDataObject<Built_Object, Data_Object>(builtObject: Built_Object): Data_Object{
-  const dataObject = Object.keys(builtObject)
-  .reduce((dataObject: Data_Object, key)  => {
-    const isIdKey = false
-    if(isIdKey){
-      const mainList: Data_Object[] = mainState[mainMap.built.toId[key]]
-      const newKey = mainMap.id.toBuilt[key]
-      dataObject[newKey] = mainList
 
-    } else {
-      dataObject[key] = builtObject[key]
-    }
-    return dataObject
-  }, {} as Data_Object)
-
-  return dataObject 
-
+function getRandom<T>(array: T[]): T{
+  const randomIndex = randomNumber({from: 0, to: array.length - 1})
+  const randomItem = array[randomIndex]
+  return randomItem
 }
-
-
-function buildOutDataObject<Data_Object, Built_Object>(dataObject: Data_Object): Built_Object{
-  const builtObject = Object.keys(dataObject)
-  .reduce((builtObject: Built_Object, key)  => {
-    const isIdKey = Object.keys(mainMap.id.toMainState).includes(key)
-    if(isIdKey){
-      const mainList: Data_Object[] = mainState[mainMap.id.toMainState[key as keyof MainState]]
-      const newKey = mainMap.id.toBuilt[key ]
-      builtObject[newKey] = mainList
-
-    } else {
-      builtObject[key] = dataObject[key]
-    }
-    return builtObject
-  }, {} as Built_Object)
-
-  return builtObject
-}
-
-function ifUserPlayerDoesntExistCreatePlayer(){
-  const {uid} = mainState.user
-  firestore().collection('Players')
-  .where("userId", "==", uid).get()
-  .then(({docs}) => {
-    const noPlayersWithUserId = !docs.length
-    if(noPlayersWithUserId){
-      dataService.add('Players',{
-        name: 'Default Player Name',
-        userId: uid,
-        activeDeckId: null,
-        deckIds: []
-      } as Player_Data_Object)
-    }
-  })
-}
-
-function deckIdToCards(deckId): Card_Object[]{
-  return mainState
-  .decks.find(d => deckId == d.id)
-  .cardIds.map(cardId => mainState.cards.find(c => cardId == c.id))
-  .map(c => buildOutDataObject<Card_Data_Object, Card_Object>(c))
-}
-
-
 
 
 

@@ -1,0 +1,5 @@
+* state is data that affects the view
+* data only changes as a possible cause of an event
+* if the event doesnt change the state, then the ui doesnt change
+* the view should observe the state and react to the data change
+* the amount of code between the action and the data storage, and the amound of code between the data update reaction and the ui changing should be minimal.

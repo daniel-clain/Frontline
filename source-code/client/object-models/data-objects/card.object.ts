@@ -1,10 +1,10 @@
-import { mainState } from "../state/main.state";
-import { Ability_Object } from "./ability.object";
-import Data_Object from "./data.object.super";
-import { Faction_Object } from "./faction.object";
-import { Type_Object } from "./type.object";
+import { mainState } from "../../state/main.state";
+import { Ability } from "./ability.object";
+import Data from "./data.object.super";
+import { Faction } from "./faction.object";
+import { Type } from "./type.object";
 
-abstract class Card_Base_Object{
+abstract class Card_Base{
   name: string = null
   hp: number = null
   budget: number = null
@@ -13,7 +13,7 @@ abstract class Card_Base_Object{
   image: any
 
 }
-export class Card_Data_Object extends Card_Base_Object implements Data_Object{
+export class Card_Data extends Card_Base implements Data{
   id
   ability1Id: string = null
   ability2Id: string = null
@@ -22,16 +22,16 @@ export class Card_Data_Object extends Card_Base_Object implements Data_Object{
 
 }
 
-export class Card_Object extends Card_Base_Object implements Data_Object{
+export class Card extends Card_Base implements Data{
   id
   image: any
-  faction: Faction_Object
-  ability1: Ability_Object
-  ability2: Ability_Object
-  type: Type_Object
+  faction: Faction
+  ability1: Ability
+  ability2: Ability
+  type: Type
 }
 
-export const transformCard = (card: Card_Data_Object): Card_Object => {
+export const transformCard = (card: Card_Data): Card => {
   const {ability1Id, ability2Id, typeId, factionId} = card
   return {
     ...card,

@@ -5,15 +5,13 @@
   flex: 1;
   margin: 2px;
   background: #eee;
-  &-inner{
-    aspect-ratio: 5/4;
-    position: relative;
-    overflow: hidden;
+  aspect-ratio: 5/4;
+  position: relative;
+  overflow: hidden;
 
-    .card-on-tile{
-      white-space:nowrap;
+  .card-on-tile{
+    white-space:nowrap;
 
-    }
   }
   &.is-open-for-drop{
     background-color: rgb(169, 250, 139);

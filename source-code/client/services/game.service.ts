@@ -1,60 +1,143 @@
-import { randomNumber } from "../helper-functions"
-import { Card_Object } from "../object-models/card.object"
-import { Game_Data_Object, Game_Object } from "../object-models/game.object"
+import { randomNumber } from "../../helper-functions"
+import { Card } from "../object-models/data-objects/card.object"
+import { createGame, CreateGameArgs, GameCard, Game_Data, Tile } from "../object-models/data-objects/game.object"
 import { mainState } from "../state/main.state"
-import { DraggedCard } from "../views/in-game/in-game.view"
+import { HoverCard } from "../components/views/play/in-game/game"
 import { dataService } from "./data.service"
 import { mainService } from "./main.service"
 import {Subject} from 'rxjs';
+import { Person, Person_Data } from "../object-models/data-objects/person.object"
+import { Player } from "../object-models/data-objects/player.object"
+
+
+const {
+  toPersonData,
+  buildOutPerson
+} = dataService
+
 
 
 
 export const gameService = {
-  startNewGame,
-  readyForGame,
-  cardDragDrop,
-  cardDragStart,
-  setMouseCoords,
-  events: {
-    onCardDropped: new Subject<DraggedCard>()
+  waitForPvpGame,
+  startGameVsAi,
+  updateGame,
+  endTurn,
+  isMyTurn,
+  setFocusCard,
+  setHoveredCard,
+  setDraggedCard,
+  stopDrag,
+  get thisPlayer(){
+    return mainState.game.players.find(p => p.id == mainState.userId)
+  },
+  getPlayerTiles,
+}
+
+function getPlayerTiles(player: Player): Tile[]{
+    return mainState.game.tiles.filter(t => t.playerId == player.id)
+}
+
+function stopDrag(){
+
+}
+
+
+function setDraggedCard(card: GameCard){
+
+}
+
+
+function setHoveredCard(card: GameCard){
+
+}
+
+
+function isMyTurn(){  
+  const {game, userId} = mainState
+  return game.playersTurnId == userId
+}
+
+function endTurn(){
+  const {game} = mainState
+  const {players, playersTurnId} = game
+  const nextPlayer = players.find(p => p.id != playersTurnId)
+  game.playersTurnId = nextPlayer.id
+  updateGame(game)
+}
+
+function setFocusCard(card: GameCard){
+  const {game,userId} = mainState
+  game.players.find(p => p.id == userId)
+  .hand.find(c => c.id = card.id)
+  .isBeingHovered = true
+  updateGame(game)
+}
+
+function waitForPvpGame(){
+
+  const {thisPerson, people} = mainState
+
+  if(!thisPerson.activeDeck){
+    alert('must have a deck to have a game')
+    return
   }
-}
+
+  const otherPersonQueuing = people.find(p => 
+    p.id != thisPerson.id &&
+    p.queuingForPvpGame
+  )
 
 
-function readyForGame(){
-  startGame(mainState.user.uid)
-}
-function startGame(playerId: string) {
-  const game = mainService.convertToDataObject<Game_Object, Game_Data_Object>(new Game_Object([playerId]))
-  dataService.add<Game_Data_Object>('Games', game)
-}
-
-function startNewGame(gameId: string){
-    
-}
-
-function cardDragDrop(draggedCard: DraggedCard){
-  const {card: {name}, mouseCoords:{x, y}} = draggedCard
-  console.log(`card (${name}) dropped at: x${x}/y${y} `);
-  mainState.draggedCard = null
-
-  gameService.events.onCardDropped.next(draggedCard)
+  if(otherPersonQueuing){
+    dataService.update('People', {
+      ...otherPersonQueuing, queuingForPvpGame: false
+    })
+    const personOpponent = buildOutPerson(otherPersonQueuing)
+    startGame({thisPerson, personOpponent})
+  } else {    
+    dataService.update('People', {
+      ...toPersonData(thisPerson), queuingForPvpGame: true
+    })
+  }
 
 }
+function startGameVsSelf(){
+  
+  const {thisPerson} = mainState
+  if(!thisPerson.activeDeck){
+    alert('must have a deck to have a game')
+    return
+  }
 
-function cardDragStart(card: Card_Object){
-  mainState.draggedCard = {...mainState.draggedCard, card}
-  mainState.hoveredCard = null
+  startGame({thisPerson, vsSelf: true})
+
+  console.log('game vs ai started');
 }
 
-function setMouseCoords(mouseCoords: {x: number, y: number}){
-  mainState.draggedCard = {...mainState.draggedCard, mouseCoords}
+function startGameVsAi(){
+  
+  const {thisPerson} = mainState
+  if(!thisPerson.activeDeck){
+    alert('must have a deck to have a game')
+    return
+  }
+
+  startGame({thisPerson, vsAi: true})
+
+  console.log('game vs ai started');
 }
 
-// impelementation
-
-function getTileCardWasDroppedOn(){
-
+function startGame(
+  {thisPerson, personOpponent, vsSelf, vsAi}: CreateGameArgs
+){
+  dataService.add<Game_Data>('Games', 
+    createGame({
+      thisPerson, personOpponent, vsSelf, vsAi
+    })
+  )
 }
 
-
+function updateGame(game: Game_Data){
+  dataService.update('Games', game)
+}
